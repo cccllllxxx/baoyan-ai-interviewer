@@ -301,7 +301,7 @@ export default function Home() {
 
           {sel && (
             <div className="card">
-              <div className="plabel">② 该项目真实面试流程（{sel.name}）</div>
+              <div className="plabel">② 该项目真实面试情况（{sel.name}）</div>
               <ul className="steps">
                 {sel.flow.map((f, i) => (
                   <li key={i}>{f}</li>
