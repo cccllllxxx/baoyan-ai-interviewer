@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { PROJECTS, getProject, MODULES } from "../lib/projects";
 
-const TOTAL_ROUNDS = 8;
+const MAIN_STAGES = 6; // 主问题 / 环节数：对齐真实保研复试结构（自我介绍→动机→科研贡献→专业→热点→综合），每个环节内自适应追问
+const MAX_EXCHANGES = 16; // 安全上限：真正结束由模型在 6 环节走完后触发「今天的面试就到这里」
 
 const TRACKS = [
   { key: "academic", label: "学术型（科研导向 / 直博）", desc: "深挖研究设计、因果识别、文献对话" },
@@ -91,7 +92,7 @@ export default function Home() {
           track,
           style,
           transcript: transcriptNow,
-          totalRounds: TOTAL_ROUNDS,
+          totalRounds: MAIN_STAGES,
           profile: profileObj ? profileToText(profileObj) : "",
         }),
       });
@@ -177,7 +178,7 @@ export default function Home() {
     setInput("");
 
     const nextRound = Math.floor(t.length / 2) + 1;
-    if (nextRound > TOTAL_ROUNDS) {
+    if (nextRound > MAX_EXCHANGES) {
       makeReport(t);
       return;
     }
@@ -235,7 +236,7 @@ export default function Home() {
         <h1>保研复试 · AI 陪练</h1>
         <div className="sub">
           {stage === "interview"
-            ? `第 ${Math.min(round, TOTAL_ROUNDS)} / ${TOTAL_ROUNDS} 轮`
+            ? `自适应追问中 · 第 ${round} 问`
             : "人文社科 · 经管保研"}
         </div>
       </header>
@@ -419,7 +420,7 @@ export default function Home() {
             <div className="plabel">这个方向要什么样的人</div>
             <div className="psummary">{profile.summary}</div>
             <div className="phint">
-              接下来的 {TOTAL_ROUNDS} 轮追问，会严格按这套标准来考察你。
+              接下来的追问会严格按这套标准，逐环节深挖你材料里最虚的地方。
             </div>
           </div>
 
@@ -454,7 +455,7 @@ export default function Home() {
 
           <div className="row">
             <button className="primary" onClick={start} disabled={loading}>
-              {loading ? "正在准备第一个问题…" : `按这个标准开始面试（${TOTAL_ROUNDS} 轮）`}
+              {loading ? "正在准备第一个问题…" : `开始面试 · 6 环节自适应追问`}
             </button>
             <button className="ghost" onClick={() => setStage("setup")} disabled={loading}>
               返回修改
