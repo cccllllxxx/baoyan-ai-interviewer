@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { PROJECTS, getProject, MODULES } from "../lib/projects";
 
 const TOTAL_ROUNDS = 8;
-const SUGGESTED = 90; // 每题建议答题时长（秒），来自 受访者Y「面试有时间限制，每题说多久要把控」
 
 const TRACKS = [
   { key: "academic", label: "学术型（科研导向 / 直博）", desc: "深挖研究设计、因果识别、文献对话" },
@@ -72,6 +71,9 @@ export default function Home() {
   const [answerTimes, setAnswerTimes] = useState([]);
   const qStartRef = useRef(null);
   const [tick, setTick] = useState(0);
+  // 每题建议答题时长（秒）——由用户自行设定，默认 90s 仅作演示占位；
+  // 「需要节奏把控」已被 受访者Y 访谈验证，但具体秒数无出处，故交给用户按自身项目经验定。
+  const [perQ, setPerQ] = useState(90);
 
   const sel = getProject(projectId, customName, customBg);
 
@@ -206,7 +208,7 @@ export default function Home() {
 
   const qCount = transcript.filter((m) => m.role === "interviewer").length;
   const elapsed = qStartRef.current ? Math.floor((Date.now() - qStartRef.current) / 1000) : 0;
-  const over = elapsed > SUGGESTED;
+  const over = elapsed > perQ;
 
   // 面试进行中：每秒刷新计时
   useEffect(() => {
@@ -225,7 +227,7 @@ export default function Home() {
     ? Math.round(answerTimes.reduce((a, b) => a + b, 0) / answerTimes.length)
     : 0;
   const maxTime = answerTimes.length ? Math.max(...answerTimes) : 0;
-  const overCount = answerTimes.filter((t) => t > SUGGESTED).length;
+  const overCount = answerTimes.filter((t) => t > perQ).length;
 
   return (
     <div className="wrap">
@@ -353,6 +355,27 @@ export default function Home() {
           </div>
 
           <div className="card">
+            <label htmlFor="perQ">每题建议答题时长（秒）</label>
+            <input
+              id="perQ"
+              type="number"
+              min="20"
+              max="300"
+              step="10"
+              value={perQ}
+              onChange={(e) => {
+                const v = parseInt(e.target.value, 10);
+                if (!isNaN(v)) setPerQ(v);
+              }}
+              style={{ maxWidth: 140 }}
+            />
+            <span className="hint">
+              不同项目节奏不同，按你了解的情况填（本院抽题制可填 60，跨校深挖可填 120）。
+              默认 90 为演示占位值；「需要节奏把控」已被访谈验证，具体秒数无统一标准，故由你自定。
+            </span>
+          </div>
+
+          <div className="card">
             <label>项目类型</label>
             <div className="styles two">
               {TRACKS.map((t) => (
@@ -462,7 +485,7 @@ export default function Home() {
           </div>
 
           <div className={`timer ${over ? "over" : ""}`}>
-            建议 {SUGGESTED}s · 已用 {elapsed}s{over ? " · 超时，试着压缩到 1 分钟内" : ""}
+            建议 {perQ}s · 已用 {elapsed}s{over ? " · 超时，试着压缩到 1 分钟内" : ""}
           </div>
 
           <div className="composer">
@@ -509,7 +532,7 @@ export default function Home() {
                   </span>
                 </div>
                 <div className="rh">
-                  建议每题控制在 {SUGGESTED}s 内；超时往往说明论点不够聚焦，先把核心结论说在前。
+                  建议每题控制在 {perQ}s 内；超时往往说明论点不够聚焦，先把核心结论说在前。
                 </div>
               </div>
             )}
