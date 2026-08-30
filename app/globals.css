@@ -466,9 +466,145 @@ footer.note {
   color: var(--muted);
 }
 
+.proj-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.proj {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+  background: #fdfcfa;
+  transition: 0.15s;
+}
+
+.proj:hover {
+  border-color: var(--muted);
+}
+
+.proj.on {
+  border-color: var(--ink);
+  background: #f2f4fa;
+}
+
+.proj .pn {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.proj .ps {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.mods {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.mod {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.mod.on {
+  border-color: var(--ink);
+  background: #f2f4fa;
+}
+
+.mod.off {
+  opacity: 0.62;
+  background: #faf8f3;
+}
+
+.mod .mn {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mod .md {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.tag {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 1px 6px;
+  letter-spacing: 0.04em;
+}
+
+.timer {
+  font-size: 13px;
+  color: var(--muted);
+  background: #f2f4fa;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 14px;
+  margin-bottom: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer.over {
+  color: var(--danger);
+  background: var(--warn-bg);
+  border-color: #f0cfc9;
+}
+
+.rhythm {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.rhythm .rl {
+  font-size: 13px;
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.rhythm .rg {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--body);
+  flex-wrap: wrap;
+}
+
+.rhythm .rg .bad {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.rhythm .rh {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.6;
+}
+
 @media (max-width: 640px) {
   .styles,
-  .styles.two {
+  .styles.two,
+  .proj-grid,
+  .mods {
     grid-template-columns: 1fr;
   }
   .wrap {

@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { PROJECTS, getProject, MODULES } from "../lib/projects";
 
 const TOTAL_ROUNDS = 8;
+const SUGGESTED = 90; // 每题建议答题时长（秒），来自 受访者Y「面试有时间限制，每题说多久要把控」
 
 const TRACKS = [
   { key: "academic", label: "学术型（科研导向 / 直博）", desc: "深挖研究设计、因果识别、文献对话" },
@@ -52,7 +54,10 @@ function profileToText(p) {
 export default function Home() {
   const [stage, setStage] = useState("setup"); // setup | profile | interview | report
   const [resume, setResume] = useState("");
-  const [target, setTarget] = useState("");
+  const [projectId, setProjectId] = useState("");
+  const [custom, setCustom] = useState(false);
+  const [customName, setCustomName] = useState("");
+  const [customBg, setCustomBg] = useState("");
   const [track, setTrack] = useState("professional");
   const [style, setStyle] = useState("gentle");
   const [transcript, setTranscript] = useState([]);
@@ -62,6 +67,13 @@ export default function Home() {
   const [error, setError] = useState("");
   const [usedMock, setUsedMock] = useState(false);
   const [profile, setProfile] = useState(null);
+
+  // 节奏把控
+  const [answerTimes, setAnswerTimes] = useState([]);
+  const qStartRef = useRef(null);
+  const [tick, setTick] = useState(0);
+
+  const sel = getProject(projectId, customName, customBg);
 
   async function ask(transcriptNow, profileObj) {
     setLoading(true);
@@ -73,7 +85,7 @@ export default function Home() {
         body: JSON.stringify({
           action: "ask",
           resume,
-          target,
+          target: sel.name,
           track,
           style,
           transcript: transcriptNow,
@@ -103,7 +115,7 @@ export default function Home() {
         body: JSON.stringify({
           action: "report",
           resume,
-          target,
+          target: sel.name,
           track,
           transcript: t,
         }),
@@ -122,8 +134,8 @@ export default function Home() {
 
   // 第一步：先让 AI 说清楚这个方向要什么样的人，再据此考察
   async function goProfile() {
-    if (!resume.trim()) {
-      setError("请先粘贴你的个人陈述或简历内容。");
+    if (!resume.trim() || (!projectId && !custom)) {
+      setError("请先选择一个项目（或自定义），并粘贴你的个人陈述 / 简历。");
       return;
     }
     setLoading(true);
@@ -132,7 +144,7 @@ export default function Home() {
       const res = await fetch("/api/interview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "profile", target, track }),
+        body: JSON.stringify({ action: "profile", target: sel.name, track }),
       });
       const data = await res.json();
       if (!res.ok || data.error) throw new Error(data.error || `请求失败 ${res.status}`);
@@ -156,6 +168,8 @@ export default function Home() {
   async function submit() {
     const answer = input.trim();
     if (!answer || loading) return;
+    const dur = qStartRef.current ? Math.round((Date.now() - qStartRef.current) / 1000) : 0;
+    setAnswerTimes((arr) => [...arr, dur]);
     const t = [...transcript, { role: "candidate", content: answer }];
     setTranscript(t);
     setInput("");
@@ -183,18 +197,44 @@ export default function Home() {
     setInput("");
     setError("");
     setProfile(null);
+    setAnswerTimes([]);
+    setProjectId("");
+    setCustom(false);
+    setCustomName("");
+    setCustomBg("");
   }
 
+  const qCount = transcript.filter((m) => m.role === "interviewer").length;
+  const elapsed = qStartRef.current ? Math.floor((Date.now() - qStartRef.current) / 1000) : 0;
+  const over = elapsed > SUGGESTED;
+
+  // 面试进行中：每秒刷新计时
+  useEffect(() => {
+    if (stage !== "interview") return;
+    const id = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(id);
+  }, [stage]);
+
+  // 新出现一道题时，重置计时起点
+  useEffect(() => {
+    qStartRef.current = Date.now();
+  }, [qCount]);
+
   const round = Math.floor(transcript.length / 2) + 1;
+  const avgTime = answerTimes.length
+    ? Math.round(answerTimes.reduce((a, b) => a + b, 0) / answerTimes.length)
+    : 0;
+  const maxTime = answerTimes.length ? Math.max(...answerTimes) : 0;
+  const overCount = answerTimes.filter((t) => t > SUGGESTED).length;
 
   return (
     <div className="wrap">
       <header className="bar">
-        <h1>复试压力面</h1>
+        <h1>保研复试 · AI 陪练</h1>
         <div className="sub">
           {stage === "interview"
             ? `第 ${Math.min(round, TOTAL_ROUNDS)} / ${TOTAL_ROUNDS} 轮`
-            : "人文社科 · 经管保研复试"}
+            : "人文社科 · 经管保研"}
         </div>
       </header>
 
@@ -209,36 +249,107 @@ export default function Home() {
       {stage === "setup" && (
         <>
           <div className="card">
-            <label htmlFor="resume">个人陈述 / 简历内容</label>
+            <label>① 选择你要准备的项目</label>
+            <div className="proj-grid">
+              {Object.values(PROJECTS).map((p) => (
+                <div
+                  key={p.id}
+                  className={`proj ${projectId === p.id && !custom ? "on" : ""}`}
+                  onClick={() => {
+                    setProjectId(p.id);
+                    setCustom(false);
+                  }}
+                >
+                  <div className="pn">{p.name}</div>
+                  <div className="ps">{p.school}</div>
+                </div>
+              ))}
+              <div
+                className={`proj ${custom ? "on" : ""}`}
+                onClick={() => {
+                  setCustom(true);
+                  setProjectId("");
+                }}
+              >
+                <div className="pn">＋ 自定义项目</div>
+                <div className="ps">输入项目名 + 背景</div>
+              </div>
+            </div>
+          </div>
+
+          {sel && (
+            <div className="card">
+              <div className="plabel">② 该项目真实面试流程（{sel.name}）</div>
+              <ul className="steps">
+                {sel.flow.map((f, i) => (
+                  <li key={i}>{f}</li>
+                ))}
+              </ul>
+              <div className="hint">{sel.note}</div>
+
+              <div style={{ marginTop: 18 }}>
+                <label>③ 选择要练习的环节</label>
+                <div className="mods">
+                  {MODULES.map((m) => (
+                    <div key={m.key} className={`mod ${m.open ? "on" : "off"}`}>
+                      <div className="mn">
+                        {m.label}
+                        {!m.open && <span className="tag">暂未开放</span>}
+                      </div>
+                      <div className="md">{m.desc}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="hint">
+                  本 demo 只开放「简历深挖追问」，其余环节灰度显示 —— 完整产品将逐步开放。
+                </div>
+              </div>
+            </div>
+          )}
+
+          {custom && (
+            <div className="card">
+              <label>自定义项目名</label>
+              <input
+                type="text"
+                value={customName}
+                onChange={(e) => setCustomName(e.target.value)}
+                placeholder="例：某高校某学院 某硕士项目"
+              />
+              <label style={{ marginTop: 14 }}>
+                项目背景（你了解的面试形式 / 环节，喂给 AI）
+              </label>
+              <textarea
+                value={customBg}
+                onChange={(e) => setCustomBg(e.target.value)}
+                placeholder="例：这个项目的面试是 3V3，一个面试官问简历深挖，一个问职业规划，一个问英语；他们很看重实习与规划的匹配度。"
+                style={{ minHeight: 120 }}
+              />
+              <div className="hint">
+                你勾选的环节与背景会作为 AI 出题依据。未来版本将探索把这类背景沉淀为可复用的项目预设。
+              </div>
+            </div>
+          )}
+
+          <div className="card">
+            <label htmlFor="resume">粘贴你的个人陈述 / 简历</label>
             <textarea
               id="resume"
               value={resume}
               onChange={(e) => setResume(e.target.value)}
-              placeholder="把你准备提交给导师的个人陈述、或简历里的科研 / 实习经历粘贴进来。内容越真实，追问越准确。"
+              placeholder="把准备提交给导师的个人陈述，或简历里的科研 / 实习经历粘贴进来。内容越真实，追问越准。"
             />
             <div className="row" style={{ marginTop: 10 }}>
               <button
                 className="ghost"
                 onClick={() => {
                   setResume(SAMPLE);
-                  setTarget("某顶尖高校 · 金融方向");
                 }}
               >
                 填入示例（脱敏）
               </button>
               <span className="hint">示例为假数据，方便快速体验</span>
             </div>
-          </div>
-
-          <div className="card">
-            <label htmlFor="target">目标院校 / 专业方向（选填）</label>
-            <input
-              id="target"
-              type="text"
-              value={target}
-              onChange={(e) => setTarget(e.target.value)}
-              placeholder="例：光华管理学院 · 金融硕士"
-            />
           </div>
 
           <div className="card">
@@ -259,7 +370,7 @@ export default function Home() {
 
           <div className="card">
             <label>面试官风格</label>
-            <div className="styles two">
+            <div className="styles">
               {STYLES.map((s) => (
                 <div
                   key={s.key}
@@ -322,11 +433,7 @@ export default function Home() {
             <button className="primary" onClick={start} disabled={loading}>
               {loading ? "正在准备第一个问题…" : `按这个标准开始面试（${TOTAL_ROUNDS} 轮）`}
             </button>
-            <button
-              className="ghost"
-              onClick={() => setStage("setup")}
-              disabled={loading}
-            >
+            <button className="ghost" onClick={() => setStage("setup")} disabled={loading}>
               返回修改
             </button>
           </div>
@@ -352,6 +459,10 @@ export default function Home() {
                 </div>
               </div>
             )}
+          </div>
+
+          <div className={`timer ${over ? "over" : ""}`}>
+            建议 {SUGGESTED}s · 已用 {elapsed}s{over ? " · 超时，试着压缩到 1 分钟内" : ""}
           </div>
 
           <div className="composer">
@@ -386,6 +497,22 @@ export default function Home() {
               <div className="score-num">{report.overall_score}</div>
               <div className="verdict">{report.one_line_verdict}</div>
             </div>
+
+            {answerTimes.length > 0 && (
+              <div className="rhythm">
+                <div className="rl">节奏表现</div>
+                <div className="rg">
+                  <span>平均答题 {avgTime}s</span>
+                  <span>最长 {maxTime}s</span>
+                  <span className={overCount > 0 ? "bad" : ""}>
+                    超时 {overCount} 次
+                  </span>
+                </div>
+                <div className="rh">
+                  建议每题控制在 {SUGGESTED}s 内；超时往往说明论点不够聚焦，先把核心结论说在前。
+                </div>
+              </div>
+            )}
 
             {report.dimension_scores && (
               <div className="dims">
