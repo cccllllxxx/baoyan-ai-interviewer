@@ -9,17 +9,12 @@
   html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body {
     font-family: "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", sans-serif;
-    color: #1c1f26;
-    background: #FBF9F6;
-    margin: 0;
-    line-height: 1.62;
-    font-size: 10.4pt;
+    color: #1c1f26; background: #FBF9F6; margin: 0;
+    line-height: 1.62; font-size: 10.4pt;
   }
   .wrap { max-width: 760px; margin: 0 auto; }
   .top {
-    border-bottom: 3px solid #1A2B5E;
-    padding-bottom: 12px;
-    margin-bottom: 14px;
+    border-bottom: 3px solid #1A2B5E; padding-bottom: 12px; margin-bottom: 14px;
     display: flex; justify-content: space-between; align-items: flex-end;
   }
   .top h1 { font-size: 19pt; margin: 0; color: #1A2B5E; letter-spacing: .5px; }
@@ -38,10 +33,8 @@
   p { margin: 0 0 7px; }
   ul { margin: 3px 0 8px; padding-left: 18px; }
   li { margin-bottom: 3px; }
-  .kv { margin: 2px 0; }
-  .kv b { color: #1A2B5E; }
-  .two { display: flex; gap: 14px; }
-  .two > div { flex: 1; }
+  .kv { margin: 2px 0; } .kv b { color: #1A2B5E; }
+  .two { display: flex; gap: 14px; } .two > div { flex: 1; }
   .card {
     background: #fff; border: 1px solid #E5E0D6; border-radius: 6px;
     padding: 9px 12px; margin: 6px 0; page-break-inside: avoid;
@@ -51,6 +44,9 @@
     display:inline-block; font-size:8pt; padding:1px 7px; border-radius:10px;
     background:#EFF3FA; color:#1A2B5E; margin-right:5px;
   }
+  .src { font-size: 8.6pt; color:#8A8577; }
+  .infer { background:#FFF8E8; border-left:3px solid #C9A227; padding:6px 10px; margin:6px 0; font-size:9.6pt; border-radius:0 3px 3px 0; }
+  .infer b { color:#8a6d00; }
   .foot {
     margin-top: 16px; padding-top: 8px; border-top: 1px solid #E5E0D6;
     font-size: 8pt; color: #9a948a; text-align: center;
@@ -74,13 +70,14 @@
   </div>
 
   <h2 class="sec"><span class="n">1</span>访谈与痛点：先听人，再动手</h2>
-  <p>产品不在白板上想，而在访谈里长。当天早晨起，用微信访谈 5 位去年上岸的清北经管方向学长学姐，辅以北大树洞检索，只取<b>有明确出处</b>的痛点。三条核心：</p>
+  <p>产品不在白板上想，而在访谈里长。当天早晨起，用微信访谈 5 位去年保研上岸的学长学姐（覆盖人文社科与经管多方向），只取<b>有明确出处</b>的痛点。三条来自访谈：</p>
   <ul>
-    <li><b>缺一个能把你问穿的人。</b>真人陪练要钱要人情，身边同学不够硬、不敢得罪你。</li>
-    <li><b>最怕科研细节被逐层追问。</b>「参与了一项研究」一问「具体哪一步是你做的」就穿——背稿话术在经管复试里是头号失分点。</li>
-    <li><b>学术型与专业型怕的东西不一样。</b>学硕直博咬因果识别，专硕咬实习产出深挖，混做必浅。</li>
+    <li><b>缺一个能把你问穿的人。</b>同学 mock「比较友好」「不上压力」；有受访者实付 <b>2000 元</b> 买 5 次 mock + 复盘 + 100 道 mock list（约 400 元/次）——需求真实且愿付费。<span class="src">受访者C、Y</span></li>
+    <li><b>真实面试比 mock 难，且没有题库。</b>老师按你的简历个性化提问，现有 mock 让人产生虚假安全感——这是访谈里冒出来的最强痛点。<span class="src">受访者C 原话</span></li>
+    <li><b>AI 不懂这个项目要什么样的人。</b>受访者因此宁愿花钱找真人 mock——这恰好是「人才画像」环节在解决的。<span class="src">受访者C 原话</span></li>
   </ul>
-  <p class="mini">反直觉验证：有受访者直言「用过 AI 工具，但它太礼貌」；也有人实付 2000 元找真人陪练——需求真实存在。又从小红书一段教授话里得到哲学锚点：教授能一眼识破 AI 背稿（引用错误 / 概念混乱 / 句式机械）。产品据此反着设计——<b>做「照妖镜」，不做「提词器」</b>。</p>
+  <div class="infer"><b>我的判断（未验证，标注清楚）：</b>经管社科简历里最虚的是「参与」两个字，一问具体哪一步是你做的就穿。访谈里无人提及此点，但产品攻击清单已覆盖（A 类经历真实性），待后续访谈验证。</div>
+  <p class="mini">另从小红书一段教授话里得到哲学锚点：教授能一眼识破 AI 背稿（引用错误 / 概念混乱 / 句式机械）。产品据此反着设计——<b>做「照妖镜」，不做「提词器」</b>。<span class="src">（此点来自社媒，非访谈）</span></p>
 
   <h2 class="sec"><span class="n">2</span>设计与取舍：一条闭环，两处取舍</h2>
   <p>用户走完整条链路，7 步：<b>选项目方向 → 勾 6 环节 → 生成人才画像 → 上传简历 → 剧场式 3 考官复试 → 诊断报告 → 无 key 自动降级兜底</b>。</p>
@@ -88,7 +85,7 @@
     <div class="card">
       <div class="tt">刻意要做的</div>
       <div class="kv"><b>剧场式 3 考官</b>：主考 + 研究背景考官 + 业界背景考官，环节自然交接，6 环节走完后进入<b>反问环节</b>（「你有什么想问我们的吗」）。</div>
-      <div class="kv"><b>人才画像</b>先于面试生成，注入评判依据。</div>
+      <div class="kv"><b>人才画像</b>先于面试生成，注入评判依据——直接回应受访者C「AI 不懂找人标准」的质疑。</div>
       <div class="kv"><b>报告给知识地图</b>不给话术：缺什么知识模块 + 可直接检索的关键词 + 资源类型与路径。</div>
       <div class="kv"><b>「你的特质」报告块</b>：one_liner + 你真正有的优势 + 会被一眼看穿的地方 + 该呈现的人设，全部从本场真实素材提炼。</div>
     </div>
@@ -103,7 +100,7 @@
   <p class="mini"><b>技术栈：</b>Next.js 14 App Router + 纯 CSS + DeepSeek API（OpenAI 兼容接口），<span class="pill">.env.local 管 key</span><span class="pill">无 key 降级 mock</span><span class="pill">API Route 代理调用隐藏 key</span>。公网部署 Vercel。</p>
 
   <h2 class="sec"><span class="n">3</span>迭代记录：commit history 即思路演进</h2>
-  <p>共 21 个 commit，频繁提交、每步可溯。关键 pivot 三处：</p>
+  <p>共 23 个 commit，频繁提交、每步可溯。关键 pivot 三处：</p>
   <ul>
     <li><b>8 轮固定 → 6 环节自适应</b>：访谈后确认真实复试结构是 6 环节，固定轮数是假需求，改为「环节内自适应追问 + 难度递增」。</li>
     <li><b>报告从「给话术」→「给知识地图」→ 再加「你的特质」</b>：清北考生不缺话术，缺「自己的东西站不站得住」；哲学落地后，报告正面（特质）先于背面（被问穿）。</li>
@@ -116,10 +113,15 @@
     <li>信心盲区（作答前自评 vs 实际评分落差）、自定义项目冷启动（AI 先反问收集项目信息）、可检索关键词→人工策展资料库、项目库扩到 30+。</li>
   </ul>
 
-  <h2 class="sec"><span class="n">5</span>AI 使用：用在哪、不用在哪</h2>
-  <p>DeepSeek 同时承担<b>面试官</b>（剧场式 3 考官 + 7 类攻击清单 + 反问环节）、<b>人才画像</b>、<b>诊断报告</b>（四维评分 + 知识地图 + 你的特质 + 反问评价）。用 AI 辅助编码。<b>明确不让 AI 做的</b>：痛点与哲学来自真人访谈和小红书教授帖，不来自 AI；报告禁编造引用与 URL——无出处的东西不交给用户。</p>
+  <h2 class="sec"><span class="n">5</span>AI 使用：制作过程中用在哪、不用在哪</h2>
+  <ul>
+    <li><b>辅助编码（主力）</b>：Next.js 骨架、API Route、prompt 设计、debug 全程由 AI 协助，单一会话内迭代到 23 个 commit。</li>
+    <li><b>起草文档</b>：产品全景与本 Memo 草稿由 AI 起草、人定稿；HTML→PDF 转换脚本由 AI 写。</li>
+    <li><b>产品运行时</b>：DeepSeek 同时承担面试官、人才画像、诊断报告三处 LLM 调用（产品本身的 AI 用途）。</li>
+    <li><b>明确不交给 AI</b>：痛点与哲学来自真人访谈和小红书教授帖，不来自 AI；报告禁编造引用与 URL——无出处的东西不交给用户。</li>
+  </ul>
 
-  <div class="foot">保研复试 AI 陪练 · 21 commits · github.com/cccllllxxx/baoyan-ai-interviewer</div>
+  <div class="foot">保研复试 AI 陪练 · 23 commits · github.com/cccllllxxx/baoyan-ai-interviewer</div>
 
 </div>
 </body>
