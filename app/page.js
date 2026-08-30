@@ -566,7 +566,7 @@ export default function Home() {
                 {b.why_fatal}
               </div>
               <div className="kv fix">
-                <b>怎么改</b>
+                <b>补哪些知识点</b>
                 {b.fix}
               </div>
             </div>
