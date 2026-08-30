@@ -54,6 +54,7 @@ function profileToText(p) {
 export default function Home() {
   const [stage, setStage] = useState("setup"); // setup | profile | interview | report
   const [resume, setResume] = useState("");
+  const [fileName, setFileName] = useState("");
   const [projectId, setProjectId] = useState("");
   const [custom, setCustom] = useState(false);
   const [customName, setCustomName] = useState("");
@@ -136,6 +137,24 @@ export default function Home() {
   }
 
   // 第一步：先让 AI 说清楚这个方向要什么样的人，再据此考察
+  async function handleResumeFile(e) {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    setError("");
+    try {
+      const fd = new FormData();
+      fd.append("file", f);
+      const res = await fetch("/api/parse", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "解析失败");
+      setResume(data.text);
+      setFileName(f.name + (data.truncated ? "（已截断至前 2 万字）" : ""));
+    } catch (err) {
+      setError("文件读取失败：" + err.message + "。可改为直接粘贴文字。");
+      setFileName("");
+    }
+  }
+
   async function goProfile() {
     if (!resume.trim() || (!projectId && !custom)) {
       setError("请先选择一个项目（或自定义），并粘贴你的个人陈述 / 简历。");
@@ -335,12 +354,30 @@ export default function Home() {
           )}
 
           <div className="card">
-            <label htmlFor="resume">粘贴你的个人陈述 / 简历</label>
+            <label htmlFor="resume">上传 / 粘贴你的个人陈述 / 简历</label>
+            <div className="row" style={{ marginBottom: 8 }}>
+              <input
+                type="file"
+                accept=".pdf,.docx,.txt,.md"
+                onChange={handleResumeFile}
+                style={{ fontSize: 13 }}
+              />
+              {fileName && (
+                <button className="ghost" onClick={() => setFileName("")}>
+                  清除
+                </button>
+              )}
+            </div>
+            {fileName && (
+              <div className="hint" style={{ marginBottom: 8 }}>
+                已读取：{fileName}
+              </div>
+            )}
             <textarea
               id="resume"
               value={resume}
               onChange={(e) => setResume(e.target.value)}
-              placeholder="把准备提交给导师的个人陈述，或简历里的科研 / 实习经历粘贴进来。内容越真实，追问越准。"
+              placeholder="把准备提交给导师的个人陈述，或简历里的科研 / 实习经历粘贴进来；也可直接上传 PDF / Word 文件，系统会自动提取文字。内容越真实，追问越准。"
             />
             <div className="row" style={{ marginTop: 10 }}>
               <button
