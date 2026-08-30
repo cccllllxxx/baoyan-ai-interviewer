@@ -208,6 +208,71 @@ button.primary:disabled {
   cursor: not-allowed;
 }
 
+.profile-card {
+  border-left: 3px solid var(--ink);
+  border-radius: 0 12px 12px 0;
+}
+
+.plabel {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.psummary {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.phint {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 12px;
+}
+
+.crit {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.crit:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.crit:first-child {
+  padding-top: 0;
+}
+
+.crit .cn {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.crit .cw {
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.crit .ce {
+  font-size: 12px;
+  color: var(--ok);
+  margin-top: 4px;
+}
+
+ul.steps.red li {
+  color: var(--danger);
+}
+
+.card.watch {
+  font-size: 14px;
+  color: var(--ink);
+}
+
 button.ghost {
   background: transparent;
   color: var(--ink);

@@ -1,9 +1,27 @@
 import {
   buildInterviewerPrompt,
+  buildProfilePrompt,
   buildReportPrompt,
   MOCK_QUESTIONS,
   MOCK_REPORT,
+  MOCK_PROFILE,
 } from "../../../lib/prompts";
+
+function parseJsonLoose(raw) {
+  let s = String(raw).trim();
+  s = s.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+  try {
+    return JSON.parse(s);
+  } catch {
+    const m = s.match(/\{[\s\S]*\}/);
+    if (m) {
+      try {
+        return JSON.parse(m[0]);
+      } catch {}
+    }
+    return null;
+  }
+}
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -37,7 +55,28 @@ async function callLLM(messages, temperature = 0.8, jsonMode = false) {
 
 export async function POST(req) {
   try {
-    const { action, resume, target, track, style, transcript, totalRounds } = await req.json();
+    const { action, resume, target, track, style, transcript, totalRounds, profile } =
+      await req.json();
+
+    if (action === "profile") {
+      const messages = [
+        {
+          role: "system",
+          content: "你只输出严格合法的 JSON，不输出任何额外文字或代码块。",
+        },
+        { role: "user", content: buildProfilePrompt({ target, track }) },
+      ];
+      const raw = await callLLM(messages, 0.5, true);
+      if (raw == null) {
+        return Response.json({ profile: MOCK_PROFILE, usedMock: true });
+      }
+      const parsed = parseJsonLoose(raw);
+      return Response.json({
+        profile: parsed || MOCK_PROFILE,
+        usedMock: false,
+        parseError: !parsed,
+      });
+    }
 
     if (action === "ask") {
       const history = (transcript || []).map((m) => ({
@@ -45,15 +84,23 @@ export async function POST(req) {
         content: m.content,
       }));
 
+      const round = Math.ceil(((transcript || []).length + 1) / 2);
       const messages = [
         {
           role: "system",
-          content: buildInterviewerPrompt({ resume, target, track, style, totalRounds }),
+          content: buildInterviewerPrompt({
+            resume,
+            target,
+            track,
+            style,
+            totalRounds,
+            currentRound: round,
+            profile,
+          }),
         },
         ...history,
       ];
 
-      const round = Math.ceil(((transcript || []).length + 1) / 2);
       let content = await callLLM(messages, 0.85, false);
 
       let usedMock = false;
@@ -85,22 +132,11 @@ export async function POST(req) {
         return Response.json({ report: MOCK_REPORT, usedMock: true });
       }
 
-      raw = String(raw).trim();
-      // 容错：剥掉模型偶尔加的 ```json 包裹
-      raw = raw.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
-
-      try {
-        const report = JSON.parse(raw);
-        return Response.json({ report, usedMock: false });
-      } catch {
-        const m = raw.match(/\{[\s\S]*\}/);
-        if (m) {
-          try {
-            return Response.json({ report: JSON.parse(m[0]), usedMock: false });
-          } catch {}
-        }
+      const parsed = parseJsonLoose(raw);
+      if (!parsed) {
         return Response.json({ report: MOCK_REPORT, usedMock: true, parseError: true });
       }
+      return Response.json({ report: parsed, usedMock: false });
     }
 
     return Response.json({ error: "unknown action" }, { status: 400 });

@@ -37,8 +37,20 @@ const SAMPLE = `【个人陈述 · 脱敏示例】
 
 未来规划：希望在贵院系继续攻读金融方向，未来从事研究工作。`;
 
+function profileToText(p) {
+  if (!p) return "";
+  const lines = [];
+  if (p.summary) lines.push(`一句话：${p.summary}`);
+  (p.criteria || []).forEach((c) => {
+    lines.push(`- ${c.name}：${c.what}（考生应能拿出：${c.evidence}）`);
+  });
+  (p.red_flags || []).forEach((r) => lines.push(`淘汰项：${r}`));
+  if (p.watch_for) lines.push(`最爱追问的点：${p.watch_for}`);
+  return lines.join("\n");
+}
+
 export default function Home() {
-  const [stage, setStage] = useState("setup"); // setup | interview | report
+  const [stage, setStage] = useState("setup"); // setup | profile | interview | report
   const [resume, setResume] = useState("");
   const [target, setTarget] = useState("");
   const [track, setTrack] = useState("academic");
@@ -49,8 +61,9 @@ export default function Home() {
   const [report, setReport] = useState(null);
   const [error, setError] = useState("");
   const [usedMock, setUsedMock] = useState(false);
+  const [profile, setProfile] = useState(null);
 
-  async function ask(transcriptNow) {
+  async function ask(transcriptNow, profileObj) {
     setLoading(true);
     setError("");
     try {
@@ -65,6 +78,7 @@ export default function Home() {
           style,
           transcript: transcriptNow,
           totalRounds: TOTAL_ROUNDS,
+          profile: profileObj ? profileToText(profileObj) : "",
         }),
       });
       const data = await res.json();
@@ -106,12 +120,34 @@ export default function Home() {
     }
   }
 
-  async function start() {
+  // 第一步：先让 AI 说清楚这个方向要什么样的人，再据此考察
+  async function goProfile() {
     if (!resume.trim()) {
       setError("请先粘贴你的个人陈述或简历内容。");
       return;
     }
-    const q = await ask([]);
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/interview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "profile", target, track }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error(data.error || `请求失败 ${res.status}`);
+      setProfile(data.profile);
+      setUsedMock(!!data.usedMock);
+      setStage("profile");
+    } catch (e) {
+      setError(String(e.message || e));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function start() {
+    const q = await ask([], profile);
     if (!q) return;
     setTranscript([{ role: "interviewer", content: q }]);
     setStage("interview");
@@ -130,7 +166,7 @@ export default function Home() {
       return;
     }
 
-    const q = await ask(t);
+    const q = await ask(t, profile);
     if (!q) return;
     const t2 = [...t, { role: "interviewer", content: q }];
     setTranscript(t2);
@@ -146,6 +182,7 @@ export default function Home() {
     setReport(null);
     setInput("");
     setError("");
+    setProfile(null);
   }
 
   const round = Math.floor(transcript.length / 2) + 1;
@@ -236,9 +273,63 @@ export default function Home() {
             </div>
           </div>
 
-          <button className="primary" onClick={start} disabled={loading}>
-            {loading ? "正在准备第一个问题…" : `开始面试（共 ${TOTAL_ROUNDS} 轮追问）`}
+          <button className="primary" onClick={goProfile} disabled={loading}>
+            {loading ? "正在生成评判标准…" : "下一步：先看这个方向要什么样的人"}
           </button>
+        </>
+      )}
+
+      {stage === "profile" && profile && (
+        <>
+          <div className="card profile-card">
+            <div className="plabel">这个方向要什么样的人</div>
+            <div className="psummary">{profile.summary}</div>
+            <div className="phint">
+              接下来的 {TOTAL_ROUNDS} 轮追问，会严格按这套标准来考察你。
+            </div>
+          </div>
+
+          <h2 className="sec">四条评判标准</h2>
+          <div className="card">
+            {(profile.criteria || []).map((c, i) => (
+              <div className="crit" key={i}>
+                <div className="cn">
+                  {i + 1}. {c.name}
+                </div>
+                <div className="cw">{c.what}</div>
+                <div className="ce">你要能拿出：{c.evidence}</div>
+              </div>
+            ))}
+          </div>
+
+          <h2 className="sec">淘汰项</h2>
+          <div className="card">
+            <ul className="steps red">
+              {(profile.red_flags || []).map((r, i) => (
+                <li key={i}>{r}</li>
+              ))}
+            </ul>
+          </div>
+
+          {profile.watch_for && (
+            <>
+              <h2 className="sec">这个方向最爱追问</h2>
+              <div className="card watch">{profile.watch_for}</div>
+            </>
+          )}
+
+          <div className="row">
+            <button className="primary" onClick={start} disabled={loading}>
+              {loading ? "正在准备第一个问题…" : `按这个标准开始面试（${TOTAL_ROUNDS} 轮）`}
+            </button>
+            <button
+              className="ghost"
+              onClick={() => setStage("setup")}
+              disabled={loading}
+            >
+              返回修改
+            </button>
+          </div>
         </>
       )}
 
