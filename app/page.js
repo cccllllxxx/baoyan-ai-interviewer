@@ -687,7 +687,20 @@ export default function Home() {
                   </div>
                   <div className="kv">
                     <b>检索关键词</b>
-                    {s.keywords}
+                    {(s.keywords || "").split(/[,，、；;\/]/).filter(Boolean).map((kw, j, arr) => (
+                      <a
+                        key={j}
+                        className="kwlink"
+                        href={`https://www.bing.com/search?q=${encodeURIComponent(kw.trim())}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {kw.trim()}{j < arr.length - 1 ? " · " : ""}
+                      </a>
+                    ))}
+                    <span className="hint" style={{ display: "block", marginTop: 4 }}>
+                      点关键词直接跳搜索；下一步将接「AI 问答」知识库窗口（路线图）
+                    </span>
                   </div>
                   <div className="kv fix">
                     <b>怎么补</b>
