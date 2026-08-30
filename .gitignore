@@ -13,3 +13,4 @@ build/
 .rep*.json
 .buildlog
 .push*
+.pe_*

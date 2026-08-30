@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { PROJECTS, getProject, MODULES } from "../lib/projects";
 
 const MAIN_STAGES = 6; // 主问题 / 环节数：对齐真实保研复试结构（自我介绍→动机→科研贡献→专业→热点→综合），每个环节内自适应追问
-const MAX_EXCHANGES = 16; // 安全上限：真正结束由模型在 6 环节走完后触发「今天的面试就到这里」
+const MAX_EXCHANGES = 18; // 安全上限：真正结束由模型在 6 环节 + 反问环节走完后触发「今天的面试就到这里」
 
 const TRACKS = [
   { key: "academic", label: "学术型（科研导向 / 直博）", desc: "深挖研究设计、因果识别、文献对话" },
@@ -590,6 +590,45 @@ export default function Home() {
             )}
           </div>
 
+          {report.personal_edge && (
+            <div className="card">
+              <h2 className="sec" style={{ marginTop: 0 }}>
+                你的特质 · 怎么更像你自己
+              </h2>
+              <div className="bp">
+                <div className="q">{report.personal_edge.one_liner}</div>
+                {(report.personal_edge.assets || []).length > 0 ? (
+                  (report.personal_edge.assets || []).map((a, i) => (
+                    <div className="kv" key={i}>
+                      <b>你真正有的</b>
+                      {a.asset}
+                      <br />
+                      <b>怎么用它当锚</b>
+                      {a.how_to_lead_with}
+                    </div>
+                  ))
+                ) : (
+                  <div className="kv">
+                    <b>素材不足</b>
+                    场对话里挖不到你的真实料，建议用你最有把握的一段经历重测
+                  </div>
+                )}
+                {(report.personal_edge.authenticity_warnings || []).length > 0 && (
+                  <div className="kv fix">
+                    <b>这些地方会被一眼看穿</b>
+                    {(report.personal_edge.authenticity_warnings || []).join("；")}
+                  </div>
+                )}
+                {report.personal_edge.positioning_advice && (
+                  <div className="kv fix">
+                    <b>你的人设</b>
+                    {report.personal_edge.positioning_advice}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           <h2 className="sec">被问穿的地方</h2>
           {(report.broken_points || []).map((b, i) => (
             <div className="bp" key={i}>
@@ -608,6 +647,29 @@ export default function Home() {
               </div>
             </div>
           ))}
+
+          {report.reverse_questions && (
+            <>
+              <h2 className="sec">你的反问环节</h2>
+              <div className="bp">
+                <div className="q">
+                  {report.reverse_questions.asked
+                    ? "面试末尾，你问了这些问题"
+                    : "你没有反问——错过了留给考官印象的最后机会"}
+                </div>
+                {(report.reverse_questions.questions || []).map((r, i) => (
+                  <div className="kv" key={i}>
+                    <b>{r.verdict}</b>
+                    {r.q} —— {r.why}
+                  </div>
+                ))}
+                <div className="kv fix">
+                  <b>考官视角</b>
+                  {report.reverse_questions.advice}
+                </div>
+              </div>
+            </>
+          )}
 
           {Array.isArray(report.study_map) && report.study_map.length > 0 && (
             <>
