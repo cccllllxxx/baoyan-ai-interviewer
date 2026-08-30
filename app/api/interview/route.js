@@ -37,7 +37,7 @@ async function callLLM(messages, temperature = 0.8, jsonMode = false) {
 
 export async function POST(req) {
   try {
-    const { action, resume, target, style, transcript, totalRounds } = await req.json();
+    const { action, resume, target, track, style, transcript, totalRounds } = await req.json();
 
     if (action === "ask") {
       const history = (transcript || []).map((m) => ({
@@ -46,7 +46,10 @@ export async function POST(req) {
       }));
 
       const messages = [
-        { role: "system", content: buildInterviewerPrompt({ resume, target, style, totalRounds }) },
+        {
+          role: "system",
+          content: buildInterviewerPrompt({ resume, target, track, style, totalRounds }),
+        },
         ...history,
       ];
 
@@ -73,7 +76,7 @@ export async function POST(req) {
           content:
             "你是一位严谨的研究生导师，只输出严格合法的 JSON，不输出任何额外文字或代码块。",
         },
-        { role: "user", content: buildReportPrompt({ resume, target, transcript }) },
+        { role: "user", content: buildReportPrompt({ resume, target, track, transcript }) },
       ];
 
       let raw = await callLLM(messages, 0.6, true);

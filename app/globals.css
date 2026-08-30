@@ -115,6 +115,51 @@ textarea {
   gap: 10px;
 }
 
+.styles.two {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.dims {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.dim {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.dim .dl {
+  font-size: 13px;
+  color: var(--body);
+  min-width: 76px;
+}
+
+.dim .db {
+  flex: 1;
+  height: 6px;
+  background: #eee9df;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.dim .df {
+  height: 100%;
+  background: var(--ink);
+  border-radius: 3px;
+}
+
+.dim .dv {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  min-width: 18px;
+  text-align: right;
+}
+
 .style-opt {
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -357,7 +402,8 @@ footer.note {
 }
 
 @media (max-width: 640px) {
-  .styles {
+  .styles,
+  .styles.two {
     grid-template-columns: 1fr;
   }
   .wrap {

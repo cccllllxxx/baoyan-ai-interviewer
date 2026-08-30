@@ -4,30 +4,44 @@ import { useState } from "react";
 
 const TOTAL_ROUNDS = 8;
 
+const TRACKS = [
+  { key: "academic", label: "学术型（学硕 / 直博）", desc: "深挖研究设计、因果识别、文献对话" },
+  { key: "professional", label: "专业型（专硕）", desc: "深挖实习产出、案例分析、行业理解" },
+];
+
 const STYLES = [
-  { key: "pressure", label: "压力型导师", desc: "语速快、直接、不容糊弄，会当场指出你的回答不成立" },
+  { key: "pressure", label: "压力型导师", desc: "语速快、直接、不留情面，当场指出你的回答不成立" },
   { key: "academic", label: "学术型导师", desc: "深挖方法论与文献，追问「你凭什么这么认为」" },
+  { key: "practice", label: "实务型导师", desc: "有业界背景，关注落地性，对空话零容忍" },
   { key: "gentle", label: "温和型导师", desc: "表面引导，实则层层递进把你引到答不上来的地方" },
 ];
 
+const DIM_LABELS = {
+  thinking: "问题意识",
+  evidence: "论据支撑",
+  structure: "表达结构",
+  pressure: "抗压诚实度",
+};
+
 const SAMPLE = `【个人陈述 · 脱敏示例】
 
-本科就读于某顶尖高校，专业排名前 15%。
+本科就读于某顶尖高校经济管理专业，专业排名前 20%。
 
-科研经历一：参与了一项关于在线教育平台用户学习行为的研究，主要负责数据处理和部分建模工作，最终模型效果有显著提升，相关成果已整理为论文投稿。
+科研经历：参与导师一项关于居民消费行为的研究课题，主要负责数据整理与部分回归分析工作。研究发现消费券政策对中等收入群体效果较为明显，相关成果已整理为工作论文。
 
-科研经历二：参与导师国家自然科学基金项目，负责文献调研与实验设计，协助完成了一篇综述文章的撰写。
+实习经历一：在某券商研究所消费组实习三个月，协助分析师完成行业数据跟踪与会议纪要整理，参与撰写了两篇深度报告的部分章节。
 
-竞赛经历：参加过全国大学生数学建模竞赛，获得省级奖项，在队内主要负责编程实现。
+实习经历二：在某互联网公司战略部实习，参与竞品分析，独立完成了一份用户调研报告。
 
-技能：熟练掌握 Python、机器学习常用框架，了解 Transformer 等深度学习模型。
+课程与技能：修读过计量经济学、公司金融等课程，熟练使用 Stata、Python。
 
-未来规划：希望在贵院系继续深造，研究方向聚焦于数据挖掘与用户行为分析。`;
+未来规划：希望在贵院系继续攻读金融方向，未来从事研究工作。`;
 
 export default function Home() {
   const [stage, setStage] = useState("setup"); // setup | interview | report
   const [resume, setResume] = useState("");
   const [target, setTarget] = useState("");
+  const [track, setTrack] = useState("academic");
   const [style, setStyle] = useState("pressure");
   const [transcript, setTranscript] = useState([]);
   const [input, setInput] = useState("");
@@ -47,6 +61,7 @@ export default function Home() {
           action: "ask",
           resume,
           target,
+          track,
           style,
           transcript: transcriptNow,
           totalRounds: TOTAL_ROUNDS,
@@ -75,6 +90,7 @@ export default function Home() {
           action: "report",
           resume,
           target,
+          track,
           transcript: t,
         }),
       });
@@ -141,7 +157,7 @@ export default function Home() {
         <div className="sub">
           {stage === "interview"
             ? `第 ${Math.min(round, TOTAL_ROUNDS)} / ${TOTAL_ROUNDS} 轮`
-            : "AI 模拟面试官"}
+            : "人文社科 · 经管保研复试"}
         </div>
       </header>
 
@@ -161,14 +177,14 @@ export default function Home() {
               id="resume"
               value={resume}
               onChange={(e) => setResume(e.target.value)}
-              placeholder="把你准备提交给导师的个人陈述、或简历里的科研/竞赛经历粘贴进来。内容越真实，追问越准确。"
+              placeholder="把你准备提交给导师的个人陈述、或简历里的科研 / 实习经历粘贴进来。内容越真实，追问越准确。"
             />
             <div className="row" style={{ marginTop: 10 }}>
               <button
                 className="ghost"
                 onClick={() => {
                   setResume(SAMPLE);
-                  setTarget("某顶尖高校 · 数据挖掘与用户行为方向");
+                  setTarget("某顶尖高校 · 金融方向");
                 }}
               >
                 填入示例（脱敏）
@@ -189,8 +205,24 @@ export default function Home() {
           </div>
 
           <div className="card">
+            <label>项目类型</label>
+            <div className="styles two">
+              {TRACKS.map((t) => (
+                <div
+                  key={t.key}
+                  className={`style-opt ${track === t.key ? "on" : ""}`}
+                  onClick={() => setTrack(t.key)}
+                >
+                  <div className="n">{t.label}</div>
+                  <div className="d">{t.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="card">
             <label>面试官风格</label>
-            <div className="styles">
+            <div className="styles two">
               {STYLES.map((s) => (
                 <div
                   key={s.key}
@@ -263,6 +295,20 @@ export default function Home() {
               <div className="score-num">{report.overall_score}</div>
               <div className="verdict">{report.one_line_verdict}</div>
             </div>
+
+            {report.dimension_scores && (
+              <div className="dims">
+                {Object.keys(DIM_LABELS).map((k) => (
+                  <div className="dim" key={k}>
+                    <div className="dl">{DIM_LABELS[k]}</div>
+                    <div className="db">
+                      <div className="df" style={{ width: `${(report.dimension_scores[k] || 0) * 10}%` }} />
+                    </div>
+                    <div className="dv">{report.dimension_scores[k] ?? "-"}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <h2 className="sec">被问穿的地方</h2>
@@ -274,7 +320,7 @@ export default function Home() {
                 {b.what_happened}
               </div>
               <div className="kv">
-                <b>为什么致命</b>
+                <b>致命在</b>
                 {b.why_fatal}
               </div>
               <div className="kv fix">
