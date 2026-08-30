@@ -255,7 +255,7 @@ export default function Home() {
         <h1>保研复试 · AI 陪练</h1>
         <div className="sub">
           {stage === "interview"
-            ? `自适应追问中 · 第 ${round} 问`
+            ? `复试现场 · 3 位考官 · 第 ${round} 问`
             : "人文社科 · 经管保研"}
         </div>
       </header>
@@ -492,7 +492,7 @@ export default function Home() {
 
           <div className="row">
             <button className="primary" onClick={start} disabled={loading}>
-              {loading ? "正在准备第一个问题…" : `开始面试 · 6 环节自适应追问`}
+              {loading ? "正在进入考场…" : `进入考场 · 开始复试`}
             </button>
             <button className="ghost" onClick={() => setStage("setup")} disabled={loading}>
               返回修改
@@ -608,6 +608,29 @@ export default function Home() {
               </div>
             </div>
           ))}
+
+          {Array.isArray(report.study_map) && report.study_map.length > 0 && (
+            <>
+              <h2 className="sec">该补的知识地图</h2>
+              {(report.study_map || []).map((s, i) => (
+                <div className="bp" key={i}>
+                  <div className="q">{s.module}</div>
+                  <div className="kv">
+                    <b>为什么缺</b>
+                    {s.gap}
+                  </div>
+                  <div className="kv">
+                    <b>检索关键词</b>
+                    {s.keywords}
+                  </div>
+                  <div className="kv fix">
+                    <b>怎么补</b>
+                    {s.resource}
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
 
           <h2 className="sec">逐轮表现</h2>
           <div className="card">
