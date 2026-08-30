@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Product Memo · 保研复试 AI 陪练</title>
+<style>
+  @page { size: A4; margin: 14mm 12mm 14mm 12mm; }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", sans-serif;
+    color: #1c1f26;
+    background: #FBF9F6;
+    margin: 0;
+    line-height: 1.62;
+    font-size: 10.4pt;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  .top {
+    border-bottom: 3px solid #1A2B5E;
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+    display: flex; justify-content: space-between; align-items: flex-end;
+  }
+  .top h1 { font-size: 19pt; margin: 0; color: #1A2B5E; letter-spacing: .5px; }
+  .top .meta { font-size: 8.6pt; color: #8A8577; text-align: right; line-height: 1.5; }
+  .philosophy {
+    background: #FDF3F0; border-left: 4px solid #A33B2E;
+    padding: 9px 14px; margin: 0 0 16px;
+    font-size: 10.2pt; color: #5a2a22; border-radius: 0 4px 4px 0;
+  }
+  .philosophy b { color: #A33B2E; }
+  h2.sec {
+    font-size: 11.4pt; color: #1A2B5E; margin: 16px 0 7px;
+    padding-left: 9px; border-left: 3px solid #1A2B5E; line-height: 1.3;
+  }
+  h2.sec .n { color:#A33B2E; font-weight: 800; margin-right: 6px; }
+  p { margin: 0 0 7px; }
+  ul { margin: 3px 0 8px; padding-left: 18px; }
+  li { margin-bottom: 3px; }
+  .kv { margin: 2px 0; }
+  .kv b { color: #1A2B5E; }
+  .two { display: flex; gap: 14px; }
+  .two > div { flex: 1; }
+  .card {
+    background: #fff; border: 1px solid #E5E0D6; border-radius: 6px;
+    padding: 9px 12px; margin: 6px 0; page-break-inside: avoid;
+  }
+  .card .tt { color:#1A2B5E; font-weight:700; font-size:10pt; margin-bottom:3px; }
+  .pill {
+    display:inline-block; font-size:8pt; padding:1px 7px; border-radius:10px;
+    background:#EFF3FA; color:#1A2B5E; margin-right:5px;
+  }
+  .foot {
+    margin-top: 16px; padding-top: 8px; border-top: 1px solid #E5E0D6;
+    font-size: 8pt; color: #9a948a; text-align: center;
+  }
+  .mini { font-size: 9pt; color:#5a5347; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <h1>Product Memo · 保研复试 AI 陪练</h1>
+    <div class="meta">
+      2026-08-30<br>
+      AI 模拟面试官 · 16 小时项目挑战
+    </div>
+  </div>
+
+  <div class="philosophy">
+    <b>产品哲学：</b>目的不是把面试者变成 AI，而是帮他发现自己的特质、更像自己地呈现。诊断报告的正面是「你的特质 · 怎么更像你自己」，背面才是「被问穿的地方」——前者锚定人设，后者防穿帮。
+  </div>
+
+  <h2 class="sec"><span class="n">1</span>访谈与痛点：先听人，再动手</h2>
+  <p>产品不在白板上想，而在访谈里长。当天早晨起，用微信访谈 5 位去年上岸的清北经管方向学长学姐，辅以北大树洞检索，只取<b>有明确出处</b>的痛点。三条核心：</p>
+  <ul>
+    <li><b>缺一个能把你问穿的人。</b>真人陪练要钱要人情，身边同学不够硬、不敢得罪你。</li>
+    <li><b>最怕科研细节被逐层追问。</b>「参与了一项研究」一问「具体哪一步是你做的」就穿——背稿话术在经管复试里是头号失分点。</li>
+    <li><b>学术型与专业型怕的东西不一样。</b>学硕直博咬因果识别，专硕咬实习产出深挖，混做必浅。</li>
+  </ul>
+  <p class="mini">反直觉验证：有受访者直言「用过 AI 工具，但它太礼貌」；也有人实付 2000 元找真人陪练——需求真实存在。又从小红书一段教授话里得到哲学锚点：教授能一眼识破 AI 背稿（引用错误 / 概念混乱 / 句式机械）。产品据此反着设计——<b>做「照妖镜」，不做「提词器」</b>。</p>
+
+  <h2 class="sec"><span class="n">2</span>设计与取舍：一条闭环，两处取舍</h2>
+  <p>用户走完整条链路，7 步：<b>选项目方向 → 勾 6 环节 → 生成人才画像 → 上传简历 → 剧场式 3 考官复试 → 诊断报告 → 无 key 自动降级兜底</b>。</p>
+  <div class="two">
+    <div class="card">
+      <div class="tt">刻意要做的</div>
+      <div class="kv"><b>剧场式 3 考官</b>：主考 + 研究背景考官 + 业界背景考官，环节自然交接，6 环节走完后进入<b>反问环节</b>（「你有什么想问我们的吗」）。</div>
+      <div class="kv"><b>人才画像</b>先于面试生成，注入评判依据。</div>
+      <div class="kv"><b>报告给知识地图</b>不给话术：缺什么知识模块 + 可直接检索的关键词 + 资源类型与路径。</div>
+      <div class="kv"><b>「你的特质」报告块</b>：one_liner + 你真正有的优势 + 会被一眼看穿的地方 + 该呈现的人设，全部从本场真实素材提炼。</div>
+    </div>
+    <div class="card">
+      <div class="tt">刻意不做的</div>
+      <div class="kv"><b>不碰理工科</b>：咬实验细节，咬点与经管社科完全不同。</div>
+      <div class="kv"><b>不给背稿话术</b>：与「照妖镜」哲学正面冲突，且教授能识破。</div>
+      <div class="kv"><b>不编造引用 / URL</b>：无访谈出处的数值不写死，报告禁杜撰书名课程名。</div>
+      <div class="kv"><b>不做语音停顿 / 真人撮合</b>：痛点未验证，留路线图。</div>
+    </div>
+  </div>
+  <p class="mini"><b>技术栈：</b>Next.js 14 App Router + 纯 CSS + DeepSeek API（OpenAI 兼容接口），<span class="pill">.env.local 管 key</span><span class="pill">无 key 降级 mock</span><span class="pill">API Route 代理调用隐藏 key</span>。公网部署 Vercel。</p>
+
+  <h2 class="sec"><span class="n">3</span>迭代记录：commit history 即思路演进</h2>
+  <p>共 21 个 commit，频繁提交、每步可溯。关键 pivot 三处：</p>
+  <ul>
+    <li><b>8 轮固定 → 6 环节自适应</b>：访谈后确认真实复试结构是 6 环节，固定轮数是假需求，改为「环节内自适应追问 + 难度递增」。</li>
+    <li><b>报告从「给话术」→「给知识地图」→ 再加「你的特质」</b>：清北考生不缺话术，缺「自己的东西站不站得住」；哲学落地后，报告正面（特质）先于背面（被问穿）。</li>
+    <li><b>简历改文件上传 + 访谈人脱敏 + 剧场化多考官</b>：交付材料都是文件形式；公开仓库不得暴露访谈对象；剧场式开场经真机验证一次到位。</li>
+  </ul>
+
+  <h2 class="sec"><span class="n">4</span>下一步：先把短板补上</h2>
+  <ul>
+    <li><b>真人测试 5 人+</b>——方案本身未经真人验证是当前最大短板。</li>
+    <li>信心盲区（作答前自评 vs 实际评分落差）、自定义项目冷启动（AI 先反问收集项目信息）、可检索关键词→人工策展资料库、项目库扩到 30+。</li>
+  </ul>
+
+  <h2 class="sec"><span class="n">5</span>AI 使用：用在哪、不用在哪</h2>
+  <p>DeepSeek 同时承担<b>面试官</b>（剧场式 3 考官 + 7 类攻击清单 + 反问环节）、<b>人才画像</b>、<b>诊断报告</b>（四维评分 + 知识地图 + 你的特质 + 反问评价）。用 AI 辅助编码。<b>明确不让 AI 做的</b>：痛点与哲学来自真人访谈和小红书教授帖，不来自 AI；报告禁编造引用与 URL——无出处的东西不交给用户。</p>
+
+  <div class="foot">保研复试 AI 陪练 · 21 commits · github.com/cccllllxxx/baoyan-ai-interviewer</div>
+
+</div>
+</body>
+</html>
