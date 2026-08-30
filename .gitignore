@@ -14,3 +14,6 @@ build/
 .buildlog
 .push*
 .pe_*
+.revq_*
+.memo2pdf*
+.memo_commit*
