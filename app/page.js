@@ -5,7 +5,7 @@ import { useState } from "react";
 const TOTAL_ROUNDS = 8;
 
 const TRACKS = [
-  { key: "academic", label: "学术型（学硕 / 直博）", desc: "深挖研究设计、因果识别、文献对话" },
+  { key: "academic", label: "学术型（科研导向 / 直博）", desc: "深挖研究设计、因果识别、文献对话" },
   { key: "professional", label: "专业型（专硕）", desc: "深挖实习产出、案例分析、行业理解" },
 ];
 
@@ -53,8 +53,8 @@ export default function Home() {
   const [stage, setStage] = useState("setup"); // setup | profile | interview | report
   const [resume, setResume] = useState("");
   const [target, setTarget] = useState("");
-  const [track, setTrack] = useState("academic");
-  const [style, setStyle] = useState("pressure");
+  const [track, setTrack] = useState("professional");
+  const [style, setStyle] = useState("gentle");
   const [transcript, setTranscript] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
